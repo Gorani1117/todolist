@@ -1,0 +1,281 @@
+/* ==========================================================================
+   CYBERPUNK MAGENTA THEME STYLES - TASKFLOW
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --neon-magenta: #ff007f;
+  --neon-magenta-glow: rgba(255, 0, 127, 0.55);
+  --neon-magenta-bright: #ff3399;
+  --neon-cyan: #00f0ff;
+  --neon-cyan-glow: rgba(0, 240, 255, 0.45);
+  --neon-yellow: #ffe600;
+  --cyber-dark-bg: #090314;
+  --cyber-card-bg: #130722;
+  --cyber-card-hover: #1c0b33;
+  --cyber-border: #321253;
+  --cyber-border-highlight: #ff007f;
+}
+
+/* Background Cyber Grid & Scanline Atmosphere */
+body {
+  background-color: var(--cyber-dark-bg) !important;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(255, 0, 127, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(255, 0, 127, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+  background-attachment: fixed;
+  color: #e2e8f0;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Cyberpunk Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090314;
+  border-left: 1px solid #230b3b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff007f 0%, #7928ca 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--neon-magenta-glow);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff3399;
+  box-shadow: 0 0 12px #ff007f;
+}
+
+/* Cyber Chamfered Borders (Clip Paths) */
+.cyber-panel {
+  background: var(--cyber-card-bg);
+  border: 1px solid var(--cyber-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(255, 0, 127, 0.04);
+  position: relative;
+}
+
+.cyber-panel::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  width: 40px;
+  height: 2px;
+  background: var(--neon-magenta);
+  box-shadow: 0 0 8px var(--neon-magenta);
+}
+
+/* Cyber Title & Glows */
+.neon-glow-magenta {
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.8), 0 0 20px rgba(255, 0, 127, 0.4);
+}
+
+.neon-glow-cyan {
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.neon-box-magenta {
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.2);
+  border-color: #ff007f !important;
+}
+
+.neon-box-cyan {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.2);
+  border-color: #00f0ff !important;
+}
+
+/* Nav Item Cyber Active */
+.nav-item {
+  position: relative;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(255, 0, 127, 0.2) 0%, rgba(255, 0, 127, 0.02) 100%) !important;
+  color: #ff3399 !important;
+  border-left: 3px solid var(--neon-magenta) !important;
+  box-shadow: inset 0 0 12px rgba(255, 0, 127, 0.15);
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+}
+
+.nav-item:not(.active):hover {
+  background: rgba(255, 0, 127, 0.08) !important;
+  color: #f1f5f9 !important;
+  border-left: 3px solid rgba(255, 0, 127, 0.4);
+}
+
+/* Cyberpunk Task Card */
+.task-item {
+  background: #130722;
+  border: 1px solid #2e114e;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent #ff007f transparent transparent;
+  opacity: 0.7;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+  background: #1a0b2e;
+  border-color: #ff007f;
+  box-shadow: 0 6px 20px rgba(255, 0, 127, 0.2), inset 0 0 15px rgba(255, 0, 127, 0.06);
+}
+
+/* Cyber Checkbox (Neon Magenta) */
+.task-checkbox {
+  appearance: none;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 2px solid #5d2594;
+  border-radius: 4px;
+  background: #0d041a;
+  outline: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.task-checkbox:hover {
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 10px var(--neon-magenta);
+}
+
+.task-checkbox:checked {
+  background-color: var(--neon-magenta);
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 14px var(--neon-magenta), inset 0 0 6px #fff;
+}
+
+.task-checkbox:checked::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  background-color: #ffffff;
+  clip-path: polygon(14% 44%, 0 60%, 40% 100%, 100% 20%, 82% 5%, 36% 70%);
+}
+
+/* Completed Task Cyber Strikethrough & Hologram Style */
+.task-completed {
+  background: #0c0516 !important;
+  border-color: #210d37 !important;
+  opacity: 0.7;
+}
+
+.task-completed:hover {
+  opacity: 0.95;
+  border-color: rgba(255, 0, 127, 0.5) !important;
+}
+
+.task-completed .task-title {
+  text-decoration: line-through;
+  color: #7b6291 !important;
+  text-shadow: none;
+}
+
+/* Priority Left Borders (Cyber Glowing) */
+.priority-high {
+  border-left: 4px solid #ff0055 !important;
+  box-shadow: inset 4px 0 10px rgba(255, 0, 85, 0.25);
+}
+
+.priority-medium {
+  border-left: 4px solid #ffe600 !important;
+  box-shadow: inset 4px 0 10px rgba(255, 230, 0, 0.2);
+}
+
+.priority-low {
+  border-left: 4px solid #00f0ff !important;
+  box-shadow: inset 4px 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* Cyber Button Pulse */
+.cyber-btn-magenta {
+  background: linear-gradient(135deg, #ff007f 0%, #d9006c 100%);
+  color: #ffffff;
+  border: 1px solid #ff3399;
+  box-shadow: 0 0 14px rgba(255, 0, 127, 0.5);
+  font-family: 'Share Tech Mono', monospace, sans-serif;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.cyber-btn-magenta:hover {
+  background: linear-gradient(135deg, #ff1a8c 0%, #ff007f 100%);
+  box-shadow: 0 0 22px rgba(255, 0, 127, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Cyber Input Field */
+.cyber-input {
+  background: #0d041a !important;
+  border: 1px solid #361458 !important;
+  color: #f1f5f9 !important;
+  transition: all 0.2s ease;
+}
+
+.cyber-input:focus {
+  border-color: var(--neon-magenta) !important;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.5), inset 0 0 6px rgba(255, 0, 127, 0.2) !important;
+}
+
+/* Modal Cyber Glow Backdrop */
+#detailModal, #statsModal {
+  background: rgba(5, 1, 10, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+/* Futuristic Scanline Animation (Subtle) */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+.scanline-effect {
+  position: relative;
+}
+
+.scanline-effect::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(255, 0, 127, 0.02) 51%, transparent 52%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+/* Sound Effect Trigger Animation */
+@keyframes cyberPop {
+  0% { transform: scale(0.96); filter: drop-shadow(0 0 10px #ff007f); }
+  50% { transform: scale(1.02); filter: drop-shadow(0 0 16px #00f0ff); }
+  100% { transform: scale(1); filter: none; }
+}
+
+.sound-pop {
+  animation: cyberPop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

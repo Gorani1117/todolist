@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER//TASKFLOW - Cyberpunk To-Do</title>
+  
+  <!-- Cyberpunk Fonts: Orbitron & Share Tech Mono + Pretendard -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'sans-serif'],
+            cyber: ['Orbitron', 'sans-serif'],
+            mono: ['Share Tech Mono', 'monospace'],
+          },
+          colors: {
+            neon: {
+              magenta: '#ff007f',
+              magentaBright: '#ff3399',
+              cyan: '#00f0ff',
+              yellow: '#ffe600',
+              purple: '#b5179e',
+            },
+            cyber: {
+              bg: '#090314',
+              surface: '#130722',
+              surfaceHover: '#1c0b33',
+              border: '#321253',
+              borderLight: '#4d1c7d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cyber-bg text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200 scanline-effect">
+
+  <!-- Top Mobile Bar -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-cyber-surface/90 backdrop-blur-md border-b border-cyber-border sticky top-0 z-30 shadow-lg shadow-black/50">
+    <div class="flex items-center gap-2">
+      <button id="mobileMenuBtn" class="p-2 rounded-lg bg-cyber-bg border border-cyber-border text-neon-magenta hover:border-neon-magenta transition">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-neon-magenta flex items-center justify-center text-white shadow-md shadow-neon-magenta/50">
+          <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <span class="font-cyber font-bold text-base tracking-wider text-neon-magenta neon-glow-magenta">TASKFLOW</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="mobileSoundToggleBtn" class="p-1.5 rounded-lg bg-cyber-bg border border-cyber-border text-neon-magenta hover:border-neon-magenta transition flex items-center gap-1 text-[11px] font-mono">
+        <i data-lucide="volume-2" id="mobileSoundIcon" class="w-4 h-4"></i>
+        <span id="mobileSoundText">FX</span>
+      </button>
+      <span class="font-mono text-[11px] px-2 py-0.5 rounded border border-neon-cyan/40 text-neon-cyan bg-neon-cyan/10">SYS.ONLINE</span>
+    </div>
+  </header>
+
+  <div class="flex-1 flex w-full max-w-7xl mx-auto overflow-hidden">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-cyber-surface/95 backdrop-blur-xl border-r border-cyber-border flex flex-col transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+      
+      <!-- Cyber Brand Header -->
+      <div class="flex items-center justify-between px-5 py-5 border-b border-cyber-border bg-cyber-bg/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-neon-magenta to-neon-purple flex items-center justify-center text-white shadow-lg shadow-neon-magenta/50 border border-neon-magentaBright">
+            <i data-lucide="activity" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h1 class="font-cyber font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neon-magenta to-neon-cyan">
+              TASKFLOW
+            </h1>
+            <p class="font-mono text-[10px] text-neon-cyan/80 tracking-widest">// CYBER.SYS.V2</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+        <div>
+          <div class="flex items-center justify-between px-2 mb-2.5">
+            <p class="font-mono text-[11px] font-bold text-slate-400 tracking-wider">// FILTER.PROTOCOL</p>
+            <span class="w-2 h-2 rounded-full bg-neon-magenta animate-pulse shadow-sm shadow-neon-magenta"></span>
+          </div>
+          <nav class="space-y-1.5 font-mono text-sm">
+            <button data-filter="all" class="nav-item active w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="layers" class="w-4 h-4 text-neon-magenta"></i>
+                <span>모든 할 일</span>
+              </span>
+              <span id="countAll" class="px-2 py-0.5 text-xs rounded font-mono font-bold bg-cyber-bg border border-cyber-border text-neon-magenta">0</span>
+            </button>
+            <button data-filter="today" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="calendar" class="w-4 h-4 text-neon-cyan"></i>
+                <span>오늘 마감</span>
+              </span>
+              <span id="countToday" class="px-2 py-0.5 text-xs rounded font-mono font-bold bg-cyber-bg border border-cyber-border text-neon-cyan">0</span>
+            </button>
+            <button data-filter="important" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="flame" class="w-4 h-4 text-neon-yellow"></i>
+                <span>중요 태스크</span>
+              </span>
+              <span id="countImportant" class="px-2 py-0.5 text-xs rounded font-mono font-bold bg-cyber-bg border border-cyber-border text-neon-yellow">0</span>
+            </button>
+            <button data-filter="completed" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all">
+              <span class="flex items-center gap-2.5">
+                <i data-lucide="check-circle" class="w-4 h-4 text-neon-magentaBright"></i>
+                <span>완료한 목록</span>
+              </span>
+              <span id="countCompletedNav" class="px-2 py-0.5 text-xs rounded font-mono font-bold bg-cyber-bg border border-cyber-border text-slate-400">0</span>
+            </button>
+          </nav>
+        </div>
+
+        <!-- Categories Section -->
+        <div>
+          <div class="flex items-center justify-between px-2 mb-2.5">
+            <p class="font-mono text-[11px] font-bold text-slate-400 tracking-wider">// SECTOR.TAGS</p>
+            <button id="addCategoryBtn" class="font-mono text-[11px] text-neon-magenta hover:text-neon-magentaBright flex items-center gap-1 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 새 섹터
+            </button>
+          </div>
+          <div id="categoryNavList" class="space-y-1.5 font-mono text-sm">
+            <!-- Dynamic categories injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-cyber-border bg-cyber-bg/40 space-y-2">
+        <button id="statsModalBtn" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono font-semibold text-slate-300 hover:text-white bg-cyber-bg/60 border border-cyber-border hover:border-neon-cyan transition shadow-sm">
+          <span class="flex items-center gap-2">
+            <i data-lucide="cpu" class="w-4 h-4 text-neon-cyan"></i>
+            시스템 통계 / 백업
+          </span>
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-500"></i>
+        </button>
+        <div class="flex items-center justify-between px-3 py-1.5 text-[11px] font-mono text-slate-500">
+          <span>THEME: CYBER_MAGENTA</span>
+          <span class="w-2 h-2 rounded-full bg-neon-cyan shadow-sm shadow-neon-cyan"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar Backdrop for Mobile -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/80 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 h-[calc(100vh-57px)] lg:h-screen overflow-y-auto px-4 sm:px-6 lg:px-8 py-6">
+      
+      <!-- Top Action & Search Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-neon-magenta shadow-sm shadow-neon-magenta"></span>
+            <h2 id="currentFilterTitle" class="text-2xl font-cyber font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-neon-magenta via-pink-400 to-neon-cyan">
+              모든 할 일
+            </h2>
+          </div>
+          <p id="taskSummaryText" class="font-mono text-xs text-slate-400 mt-1">
+            STATUS: ACTIVE [0] · ARCHIVED [0]
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Cyber Search Input -->
+          <div class="relative flex-1 sm:w-64">
+            <i data-lucide="search" class="w-4 h-4 text-neon-magenta/60 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input type="text" id="searchInput" placeholder="태스크 스캔 / 검색..." 
+                   class="cyber-input w-full pl-9 pr-8 py-2 text-xs font-mono rounded-xl focus:outline-none placeholder-slate-500">
+            <button id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-neon-magenta hover:text-white">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Sort Select -->
+          <select id="sortSelect" class="cyber-input py-2 px-3 text-xs font-mono rounded-xl focus:outline-none cursor-pointer">
+            <option value="created-desc">// 최신 등록순</option>
+            <option value="due-asc">// 마감일 빠른순</option>
+            <option value="priority-desc">// 위험도(우선순위)순</option>
+            <option value="title-asc">// 이름순 (A-Z)</option>
+          </select>
+
+          <!-- Sound FX Toggle Button -->
+          <button id="soundToggleBtn" type="button" title="게임 효과음 토글 (뿅뿅 사운드)"
+                  class="cyber-input py-2 px-3 text-xs font-mono rounded-xl flex items-center gap-1.5 text-neon-magenta hover:border-neon-magenta hover:shadow-sm hover:shadow-neon-magenta/30 transition cursor-pointer">
+            <i data-lucide="volume-2" id="soundIcon" class="w-3.5 h-3.5"></i>
+            <span id="soundStatusText">FX: ON</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Add Task Bar (Cyberpunk HUD Style) -->
+      <div class="cyber-panel rounded-2xl p-4 sm:p-5 mb-6 border border-cyber-border hover:border-neon-magenta/50 transition-all">
+        <form id="quickAddForm" class="space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-6 h-6 rounded border border-neon-magenta/60 flex items-center justify-center text-neon-magenta bg-neon-magenta/10 flex-shrink-0 font-mono text-xs">
+              &gt;_
+            </div>
+            <input type="text" id="taskInput" placeholder="새로운 임무(할 일)를 입력하세요... [Enter 키로 즉시 등록]" 
+                   autocomplete="off"
+                   class="flex-1 bg-transparent text-white placeholder-slate-500 focus:outline-none text-sm sm:text-base font-medium">
+          </div>
+
+          <!-- Task Options Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-cyber-border text-xs">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <!-- Priority Selector -->
+              <div class="relative">
+                <select id="prioritySelect" class="cyber-input appearance-none rounded-lg pl-7 pr-6 py-1.5 cursor-pointer font-mono text-xs hover:border-neon-magenta transition">
+                  <option value="low">LOW [낮음]</option>
+                  <option value="medium" selected>MED [보통]</option>
+                  <option value="high">HIGH [긴급!]</option>
+                </select>
+                <i data-lucide="flame" class="w-3.5 h-3.5 text-neon-yellow absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+
+              <!-- Due Date Selector -->
+              <div class="relative">
+                <input type="date" id="dueDateInput" class="cyber-input rounded-lg px-2.5 py-1.5 font-mono text-xs cursor-pointer hover:border-neon-cyan transition">
+              </div>
+
+              <!-- Category Select -->
+              <div class="relative">
+                <select id="categorySelect" class="cyber-input appearance-none rounded-lg pl-6 pr-5 py-1.5 cursor-pointer font-mono text-xs hover:border-neon-magenta transition">
+                  <option value="업무">💼 업무</option>
+                  <option value="개인" selected>🏡 개인</option>
+                  <option value="공부">📚 공부</option>
+                </select>
+                <i data-lucide="tag" class="w-3.5 h-3.5 text-neon-magenta absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+              </div>
+            </div>
+
+            <!-- Add Button (Glowing Magenta) -->
+            <button type="submit" class="cyber-btn-magenta px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>EXECUTE_ADD [추가]</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ACTIVE TASKS LIST -->
+      <section class="space-y-2 mb-8">
+        <div class="flex items-center justify-between px-1 mb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan shadow-sm shadow-neon-cyan"></span>
+            <h3 class="font-mono text-xs font-bold text-neon-cyan tracking-wider uppercase">
+              // ACTIVE_TASKS (<span id="activeCount">0</span>)
+            </h3>
+          </div>
+        </div>
+
+        <div id="activeTaskList" class="space-y-2.5">
+          <!-- Active tasks dynamically rendered here -->
+        </div>
+
+        <!-- Empty State for Active Tasks -->
+        <div id="activeEmptyState" class="hidden py-14 flex flex-col items-center justify-center text-center p-6 bg-cyber-surface/60 rounded-2xl border border-dashed border-cyber-border">
+          <div class="w-14 h-14 rounded-2xl bg-neon-magenta/10 border border-neon-magenta/40 flex items-center justify-center text-neon-magenta mb-3 shadow-lg shadow-neon-magenta/20">
+            <i data-lucide="terminal" class="w-7 h-7"></i>
+          </div>
+          <h4 class="font-cyber font-bold text-slate-200 mb-1">NO ACTIVE OBJECTIVES</h4>
+          <p class="text-xs font-mono text-slate-500 max-w-sm">모든 임무가 완료되었거나 비어있습니다. 상단 프롬프트에서 새로운 태스크를 실행하십시오.</p>
+        </div>
+      </section>
+
+      <!-- COMPLETED TASKS SECTION (하단 완료한 목록) -->
+      <section id="completedSection" class="border-t border-cyber-border/80 pt-6 mt-auto">
+        <div class="flex items-center justify-between mb-3">
+          <!-- Collapsible Header Button -->
+          <button id="toggleCompletedBtn" class="flex items-center gap-2.5 text-sm font-cyber font-bold text-slate-400 hover:text-neon-magenta group transition">
+            <span class="w-6 h-6 rounded bg-cyber-surface border border-cyber-border flex items-center justify-center text-slate-400 group-hover:border-neon-magenta group-hover:text-neon-magenta transition">
+              <i id="completedChevronIcon" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200"></i>
+            </span>
+            <span class="tracking-wider">// COMPLETED_ARCHIVE (<span id="completedCount" class="text-neon-magenta">0</span>)</span>
+            <span class="font-mono text-[11px] font-normal text-slate-500">[클릭하여 토글]</span>
+          </button>
+
+          <!-- Clear Completed Tasks Button -->
+          <button id="clearCompletedBtn" class="hidden font-mono text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-950/30 border border-rose-900/50 hover:border-rose-500 transition">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            PURGE_ALL [기록 비우기]
+          </button>
+        </div>
+
+        <!-- Completed Tasks List Container -->
+        <div id="completedTasksContainer" class="space-y-2.5 transition-all duration-300">
+          <div id="completedTaskList" class="space-y-2">
+            <!-- Completed tasks dynamically rendered here -->
+          </div>
+          <p id="completedEmptyNotice" class="font-mono text-xs text-slate-500 italic py-2 px-1">// 아카이브가 비어 있습니다. 완료된 임무가 여기에 누적됩니다.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TASK DETAIL & EDIT MODAL (Cyber Hologram Style) -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel rounded-2xl max-w-lg w-full border border-neon-magenta/60 shadow-2xl shadow-neon-magenta/20 overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-cyber-border bg-cyber-bg/70">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-neon-magenta shadow-sm shadow-neon-magenta"></span>
+          <h3 class="font-cyber font-bold text-neon-magenta tracking-wide">TASK_SPECS // 상세 정보</h3>
+        </div>
+        <button id="closeDetailModal" class="p-1 rounded text-slate-400 hover:text-neon-magenta hover:bg-neon-magenta/10 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="detailForm" class="p-6 overflow-y-auto space-y-4 text-sm font-mono">
+        <input type="hidden" id="editTaskId">
+
+        <!-- Title -->
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1">// TITLE_PARAMETER</label>
+          <input type="text" id="editTitle" required class="cyber-input w-full px-3 py-2 rounded-xl text-white font-sans font-semibold">
+        </div>
+
+        <!-- Options Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">// PRIORITY</label>
+            <select id="editPriority" class="cyber-input w-full px-3 py-2 rounded-xl text-xs">
+              <option value="low">LOW [낮음]</option>
+              <option value="medium">MED [보통]</option>
+              <option value="high">HIGH [긴급]</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">// DUE_DATE</label>
+            <input type="date" id="editDueDate" class="cyber-input w-full px-3 py-2 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">// SECTOR</label>
+            <select id="editCategory" class="cyber-input w-full px-3 py-2 rounded-xl text-xs">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Memo / Description -->
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1">// LOG_MEMO (세부 사항)</label>
+          <textarea id="editMemo" rows="3" placeholder="메모, 링크, 프로토콜 지침을 입력..." 
+                    class="cyber-input w-full px-3 py-2 rounded-xl text-xs resize-none font-sans"></textarea>
+        </div>
+
+        <!-- Subtasks -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-slate-400 uppercase">// SUB_ROUTINES (서브태스크)</label>
+            <span id="subtaskProgress" class="text-xs text-neon-cyan font-bold font-mono">0/0</span>
+          </div>
+          <div id="subtaskList" class="space-y-1.5 mb-2">
+            <!-- Dynamic Subtasks -->
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="newSubtaskInput" placeholder="하위 단계 등록..." class="cyber-input flex-1 px-3 py-1.5 rounded-lg text-xs font-sans">
+            <button type="button" id="addSubtaskBtn" class="px-3 py-1.5 bg-cyber-surface border border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan hover:text-black rounded-lg text-xs font-bold transition">
+              + 추가
+            </button>
+          </div>
+        </div>
+
+        <!-- Status & Dates Info -->
+        <div class="pt-2 border-t border-cyber-border flex items-center justify-between text-xs text-slate-500 font-mono">
+          <span id="createdDateText">INIT: -</span>
+          <span id="completedDateText">STATUS: -</span>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" id="deleteTaskFromModal" class="px-3 py-2 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> TERMINATE [삭제]
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="cancelModalBtn" class="px-4 py-2 border border-cyber-border text-slate-400 hover:text-white rounded-xl text-xs font-bold transition">
+              ABORT [취소]
+            </button>
+            <button type="submit" class="cyber-btn-magenta px-5 py-2 rounded-xl text-xs font-bold shadow-md transition">
+              COMMIT_SAVE [저장]
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STATS & SETTINGS MODAL -->
+  <div id="statsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="cyber-panel rounded-2xl max-w-md w-full border border-neon-cyan/60 shadow-2xl shadow-neon-cyan/20 overflow-hidden font-mono">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-cyber-border bg-cyber-bg/70">
+        <h3 class="font-cyber font-bold text-neon-cyan flex items-center gap-2">
+          <i data-lucide="cpu" class="w-5 h-5"></i>
+          SYSTEM_METRICS // 통계 & 백업
+        </h3>
+        <button id="closeStatsModal" class="p-1 rounded text-slate-400 hover:text-neon-cyan transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Progress Bar -->
+        <div class="bg-cyber-bg p-4 rounded-xl border border-cyber-border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-slate-400">// COMPLETION_RATIO</span>
+            <span id="statsPercent" class="text-base font-cyber font-bold text-neon-magenta neon-glow-magenta">0%</span>
+          </div>
+          <div class="w-full bg-cyber-surface rounded-full h-3 border border-cyber-border overflow-hidden">
+            <div id="statsProgressBar" class="bg-gradient-to-r from-neon-magenta to-neon-cyan h-3 rounded-full transition-all duration-500 shadow-sm shadow-neon-magenta" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-slate-400 mt-2">
+            <span>ACTIVE: <strong id="statsActiveCount" class="text-neon-cyan">0</strong></span>
+            <span>ARCHIVED: <strong id="statsCompletedCount" class="text-neon-magenta">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Data Backup & Restore -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">// DATA_MIRRORING</h4>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button id="exportJsonBtn" class="flex items-center justify-center gap-2 py-2.5 px-3 bg-cyber-bg hover:bg-neon-cyan/10 border border-cyber-border hover:border-neon-cyan text-neon-cyan rounded-xl font-bold transition">
+              <i data-lucide="download" class="w-4 h-4"></i> BACKUP_EXPORT
+            </button>
+            <label class="flex items-center justify-center gap-2 py-2.5 px-3 bg-cyber-bg hover:bg-neon-magenta/10 border border-cyber-border hover:border-neon-magenta text-neon-magenta rounded-xl font-bold cursor-pointer transition">
+              <i data-lucide="upload" class="w-4 h-4"></i> RESTORE_IMPORT
+              <input type="file" id="importJsonInput" accept=".json" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="pt-2 border-t border-cyber-border">
+          <button id="resetAllDataBtn" class="w-full py-2.5 text-rose-400 hover:bg-rose-950/30 border border-rose-950 rounded-xl text-xs font-bold transition">
+            PURGE_CORE_MEMORY [모든 데이터 초기화]
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION (Neon HUD Badge) -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden items-center gap-3 bg-cyber-surface border border-neon-magenta text-white px-5 py-3 rounded-xl shadow-xl shadow-neon-magenta/30 text-xs font-mono">
+    <i id="toastIcon" data-lucide="zap" class="w-4 h-4 text-neon-magenta animate-pulse"></i>
+    <span id="toastMessage">STATUS NOTIFICATION</span>
+    <button id="toastUndoBtn" class="hidden ml-2 text-xs font-bold text-neon-cyan underline hover:text-white">
+      UNDO [취소]
+    </button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
